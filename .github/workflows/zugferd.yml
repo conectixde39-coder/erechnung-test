@@ -1,0 +1,36 @@
+
+name: ZUGFeRD Paket erstellen
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: PHP 8.2 einrichten
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: dom, libxml, simplexml, zip, mbstring, gd
+          tools: composer:v2
+          coverage: none
+
+      - name: ZUGFeRD installieren
+        run: |
+          echo '{}' > composer.json
+          composer config platform.php 8.2.34
+          composer require horstoeko/zugferd --no-interaction --no-progress --prefer-dist
+          composer check-platform-reqs
+
+      - name: Paket erstellen
+        run: |
+          zip -q -r zugferd-php82.zip vendor composer.json composer.lock
+
+      - name: Paket bereitstellen
+        uses: actions/upload-artifact@v4
+        with:
+          name: zugferd-php82
+          path: zugferd-php82.zip
+          retention-days: 7
