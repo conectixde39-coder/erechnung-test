@@ -23,6 +23,10 @@ jobs:
           composer config platform.php 8.2.34
           composer require horstoeko/zugferd --no-interaction --no-progress --prefer-dist
           composer check-platform-reqs
+      
+      - name: Sicherheitspruefung
+        run: |
+          composer audit --locked --no-interaction
 
       - name: Paket erstellen
         run: |
